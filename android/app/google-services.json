@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "82601315394",
+    "project_id": "cue-bar-83e8b",
+    "storage_bucket": "cue-bar-83e8b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:82601315394:android:33b9f57ae9145cbbbfb1db",
+        "android_client_info": {
+          "package_name": "com.example.cue_bar"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBxzfUqvcuUPHtUZbFLDy5OawFJC9BTHX4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
