@@ -1,5 +1,11 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cue_bar/services/add_table.dart';
 import 'package:cue_bar/widgets/text_widget.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -9,16 +15,21 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List tables = ['1'];
+  void _startCounter1(int count1, StreamController controller1) {
+    Future<void>.delayed(const Duration(seconds: 1), () {
+      count1++;
+      controller1.sink.add(count1);
+      _startCounter1(count1, controller1);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {
-          setState(() {
-            tables.add('1');
-          });
+          addTable();
         },
       ),
       appBar: AppBar(
@@ -30,33 +41,148 @@ class _HomeScreenState extends State<HomeScreen> {
           color: Colors.white,
         ),
       ),
-      body: GridView.builder(
-        itemCount: tables.length,
-        gridDelegate:
-            const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-        itemBuilder: (context, index) {
-          return Card(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset(
-                  'assets/images/pool-table.png',
-                  height: 150,
+      body: StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance.collection('Tables').snapshots(),
+          builder:
+              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.hasError) {
+              print(snapshot.error);
+              return const Center(child: Text('Error'));
+            }
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Padding(
+                padding: EdgeInsets.only(top: 50),
+                child: Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.black,
+                  ),
                 ),
-                const SizedBox(
-                  height: 10,
-                ),
-                TextWidget(
-                  text: 'Table #${index + 1}',
-                  fontFamily: 'Bold',
-                  fontSize: 18,
-                ),
-              ],
-            ),
-          );
-        },
-      ),
+              );
+            }
+
+            final data = snapshot.requireData;
+
+            return ListView.builder(
+              itemCount: data.docs.length,
+              itemBuilder: (context, index) {
+                int count = 0;
+                final controller = StreamController<int>.broadcast();
+
+                return Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Card(
+                    elevation: 5,
+                    child: Container(
+                      height: 200,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: StreamBuilder<int>(
+                          stream: controller.stream,
+                          initialData: count,
+                          builder: (context, snapshot1) {
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      'assets/images/pool-table.png',
+                                      height: 150,
+                                    ),
+                                    TextWidget(
+                                      text: 'Table ${index + 1}',
+                                      fontSize: 24,
+                                      fontFamily: 'Bold',
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      width: 150,
+                                      height: 100,
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          TextWidget(
+                                            text:
+                                                '${(snapshot1.data! ~/ 60).toString().padLeft(2, '0')}:${(snapshot1.data! % 60).toString().padLeft(2, '0')}',
+                                            fontSize: 45,
+                                            fontFamily: 'Bold',
+                                          ),
+                                          TextWidget(
+                                            text: 'Time',
+                                            fontSize: 11,
+                                            fontFamily: 'Medium',
+                                            color: Colors.grey,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    MaterialButton(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      color: snapshot1.data == 0
+                                          ? Colors.red
+                                          : Colors.green,
+                                      onPressed: () {
+                                        if (snapshot1.data == 0) {
+                                          _startCounter1(count, controller);
+                                        }
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(5.0),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Icon(
+                                              snapshot1.data == 0
+                                                  ? Icons.play_arrow
+                                                  : Icons
+                                                      .monetization_on_outlined,
+                                              size: 48,
+                                              color: Colors.white,
+                                            ),
+                                            TextWidget(
+                                              text: snapshot1.data == 0
+                                                  ? 'Start'
+                                                  : 'Checkout',
+                                              fontSize: 11,
+                                              fontFamily: 'Medium',
+                                              color: Colors.white,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            );
+                          }),
+                    ),
+                  ),
+                );
+              },
+            );
+          }),
     );
+  }
+
+  String format(data) {
+    return '${(data ~/ 3600).toString().padLeft(2, '0')}:${((data % 3600) ~/ 60).toString().padLeft(2, '0')}';
   }
 }
