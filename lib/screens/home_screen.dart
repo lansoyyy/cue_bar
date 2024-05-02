@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cue_bar/screens/products_screen.dart';
 import 'package:cue_bar/services/add_table.dart';
 import 'package:cue_bar/widgets/text_widget.dart';
 import 'package:flutter/cupertino.dart';
@@ -138,6 +139,64 @@ class _HomeScreenState extends State<HomeScreen> {
                                       onPressed: () {
                                         if (snapshot1.data == 0) {
                                           _startCounter1(count, controller);
+                                        } else {
+                                          showDialog(
+                                              context: context,
+                                              builder: (context) => AlertDialog(
+                                                    title: const Text(
+                                                      'Checkout Confirmation',
+                                                      style: TextStyle(
+                                                          fontFamily: 'QBold',
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                    content: const Text(
+                                                      'Are you sure you want to checkout?',
+                                                      style: TextStyle(
+                                                          fontFamily:
+                                                              'QRegular'),
+                                                    ),
+                                                    actions: <Widget>[
+                                                      MaterialButton(
+                                                        onPressed: () =>
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop(true),
+                                                        child: const Text(
+                                                          'Close',
+                                                          style: TextStyle(
+                                                              fontFamily:
+                                                                  'QRegular',
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        ),
+                                                      ),
+                                                      MaterialButton(
+                                                        onPressed: () async {
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                          Navigator.of(context).push(
+                                                              MaterialPageRoute(
+                                                                  builder:
+                                                                      (context) =>
+                                                                          ProductScreen(
+                                                                            time:
+                                                                                snapshot1.data!,
+                                                                          )));
+                                                        },
+                                                        child: const Text(
+                                                          'Continue',
+                                                          style: TextStyle(
+                                                              fontFamily:
+                                                                  'QRegular',
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ));
                                         }
                                       },
                                       child: Padding(
