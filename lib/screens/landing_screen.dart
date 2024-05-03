@@ -1,3 +1,4 @@
+import 'package:cue_bar/screens/home_screen.dart';
 import 'package:cue_bar/widgets/button_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -26,7 +27,10 @@ class LandingScreen extends StatelessWidget {
               textColor: Colors.black,
               color: Colors.white,
               label: 'Get Started',
-              onPressed: () {},
+              onPressed: () {
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    builder: (context) => const HomeScreen()));
+              },
             ),
           ),
         ],
