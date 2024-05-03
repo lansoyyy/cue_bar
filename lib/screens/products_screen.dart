@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cue_bar/screens/receipt_page.dart';
 import 'package:cue_bar/services/add_product.dart';
 import 'package:cue_bar/services/add_table.dart';
 import 'package:cue_bar/widgets/button_widget.dart';
@@ -36,6 +37,8 @@ class _ProductScreenState extends State<ProductScreen> {
   final searchController = TextEditingController();
   String nameSearched = '';
 
+  List items = [];
+
   @override
   Widget build(BuildContext context) {
     int total = widget.time * 5;
@@ -50,7 +53,14 @@ class _ProductScreenState extends State<ProductScreen> {
               Icons.monetization_on_outlined,
               color: Colors.white,
             ),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => ReceiptScreen(
+                        items: items,
+                        timerate: widget.time * 5,
+                        total: total,
+                      )));
+            },
           ),
           const SizedBox(
             height: 20,
@@ -241,6 +251,14 @@ class _ProductScreenState extends State<ProductScreen> {
                                                 qty;
                                             setState(
                                               () {
+                                                items.add({
+                                                  'name': data.docs[index]
+                                                      ['name'],
+                                                  'price': int.parse(data
+                                                      .docs[index]['price']),
+                                                  'qty': qty,
+                                                  'total': toAdd,
+                                                });
                                                 total += toAdd;
                                               },
                                             );
