@@ -21,9 +21,11 @@ import 'package:intl/intl.dart' show DateFormat, toBeginningOfSentenceCase;
 
 class ProductScreen extends StatefulWidget {
   int time;
+  int rate;
 
   ProductScreen({
     super.key,
+    required this.rate,
     required this.time,
   });
 
@@ -41,7 +43,7 @@ class _ProductScreenState extends State<ProductScreen> {
 
   @override
   Widget build(BuildContext context) {
-    int total = widget.time * 5;
+    int total = widget.time * widget.rate;
     return Scaffold(
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
