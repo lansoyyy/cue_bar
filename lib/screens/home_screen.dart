@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cue_bar/screens/config_page.dart';
 import 'package:cue_bar/screens/products_screen.dart';
 import 'package:cue_bar/services/add_table.dart';
 import 'package:cue_bar/widgets/text_widget.dart';
@@ -41,6 +42,18 @@ class _HomeScreenState extends State<HomeScreen> {
           fontFamily: 'Bold',
           color: Colors.white,
         ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => const ConfigPage()));
+            },
+            icon: const Icon(
+              Icons.settings,
+              color: Colors.white,
+            ),
+          ),
+        ],
       ),
       body: StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance.collection('Tables').snapshots(),
