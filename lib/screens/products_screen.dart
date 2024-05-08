@@ -43,6 +43,7 @@ class _ProductScreenState extends State<ProductScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.rate);
     int total = widget.time * widget.rate;
     return Scaffold(
       floatingActionButton: Column(
@@ -59,7 +60,7 @@ class _ProductScreenState extends State<ProductScreen> {
               Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => ReceiptScreen(
                         items: items,
-                        timerate: widget.time * 5,
+                        timerate: widget.time * widget.rate,
                         total: total,
                       )));
             },

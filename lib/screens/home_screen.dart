@@ -222,7 +222,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                         context)
                                                                     .push(MaterialPageRoute(
                                                                         builder: (context) => ProductScreen(
-                                                                              rate: rateData['rate'],
+                                                                              rate: (rateData['rate'] / 3600).toInt(),
                                                                               time: snapshot1.data!,
                                                                             )));
                                                               },

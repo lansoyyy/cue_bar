@@ -1,4 +1,5 @@
 import 'package:cue_bar/screens/home_screen.dart';
+import 'package:cue_bar/screens/login_screen.dart';
 import 'package:cue_bar/widgets/button_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -29,7 +30,7 @@ class LandingScreen extends StatelessWidget {
               label: 'Get Started',
               onPressed: () {
                 Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (context) => const HomeScreen()));
+                    builder: (context) => const LoginScreen()));
               },
             ),
           ),

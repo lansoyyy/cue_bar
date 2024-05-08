@@ -23,6 +23,7 @@ class TextFieldWidget extends StatefulWidget {
   final String? errorText;
   final bool? isRequred;
   bool? showErrorMsg;
+  late Color? textColor;
 
   TextFieldWidget(
       {super.key,
@@ -38,6 +39,7 @@ class TextFieldWidget extends StatefulWidget {
       this.maxLine = 1,
       this.hintColor = Colors.white,
       this.borderColor = const Color(0xff1A1851),
+      this.textColor = const Color(0xff1A1851),
       this.showEye = false,
       this.color = Colors.white,
       this.radius = 5,
@@ -69,7 +71,7 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
                   style: TextStyle(
                     fontSize: 14,
                     fontFamily: 'Bold',
-                    color: primary,
+                    color: widget.textColor,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -106,15 +108,11 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
               style: TextStyle(
                 fontFamily: 'Regular',
                 fontSize: 14,
-                color: primary,
+                color: widget.textColor,
               ),
               textCapitalization: widget.textCapitalization!,
               keyboardType: widget.inputType,
               decoration: InputDecoration(
-                prefixIcon: Icon(
-                  widget.prefixIcon,
-                  color: primary,
-                ),
                 filled: true,
                 fillColor: grey.withOpacity(0.2),
                 suffixIcon: widget.showEye! == true
@@ -127,11 +125,11 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
                         icon: widget.isObscure!
                             ? Icon(
                                 Icons.visibility,
-                                color: primary,
+                                color: widget.textColor,
                               )
                             : Icon(
                                 Icons.visibility_off,
-                                color: primary,
+                                color: widget.textColor,
                               ))
                     : const SizedBox(),
                 contentPadding: const EdgeInsets.fromLTRB(20.0, 0, 20.0, 0),
@@ -139,7 +137,7 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
                   fontStyle: widget.fontStyle!,
                   fontFamily: 'Regular',
                   fontSize: 14,
-                  color: primary,
+                  color: widget.textColor,
                 ),
                 hintText: widget.hint,
                 border: InputBorder.none,
