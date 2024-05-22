@@ -1,3 +1,7 @@
+import 'package:cue_bar/screens/home_screen.dart';
+import 'package:cue_bar/screens/new/items_screen.dart';
+import 'package:cue_bar/screens/new/receipts_screen.dart';
+import 'package:cue_bar/screens/receipt_page.dart';
 import 'package:flutter/material.dart';
 import 'package:cue_bar/widgets/text_widget.dart';
 
@@ -11,7 +15,7 @@ class DrawerWidget extends StatelessWidget {
     return Container(
       height: double.infinity,
       width: 250,
-      color: Colors.blue[100],
+      color: Colors.black,
       child: SafeArea(
           child: Padding(
         padding: const EdgeInsets.only(top: 20),
@@ -20,61 +24,86 @@ class DrawerWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
                   decoration: BoxDecoration(
                       border: Border.all(color: primary),
                       shape: BoxShape.circle,
                       color: Colors.white),
-                  child: Padding(
-                    padding: const EdgeInsets.all(2.5),
-                    child: Image.asset(
-                      'assets/images/RTA logo 1.png',
-                      height: 35,
+                  child: const Padding(
+                    padding: EdgeInsets.all(2.5),
+                    child: Icon(
+                      Icons.person,
                     ),
                   ),
                 ),
+                const SizedBox(
+                  width: 20,
+                ),
                 TextWidget(
-                  text: 'Zuc Ram Jr.',
+                  text: 'POS 1',
                   fontFamily: 'Bold',
                   fontSize: 16,
+                  color: Colors.white,
                 ),
-                Builder(builder: (context) {
-                  return IconButton(
-                    onPressed: () {
-                      Scaffold.of(context).closeDrawer();
-                    },
-                    icon: Icon(
-                      Icons.menu,
-                      color: primary,
-                      size: 32,
-                    ),
-                  );
-                }),
               ],
             ),
             const SizedBox(
               height: 50,
             ),
+            const Divider(),
             ListTile(
               onTap: () {
-                // Navigator.of(context).pushReplacement(MaterialPageRoute(
-                //     builder: (context) => const HomeScreen()));
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    builder: (context) => const HomeScreen()));
               },
+              leading: const Icon(
+                Icons.shopping_bag_outlined,
+                color: Colors.white,
+              ),
               title: TextWidget(
-                text: 'Help',
+                text: 'Sales',
                 fontSize: 14,
                 fontFamily: 'Bold',
+                color: Colors.white,
               ),
             ),
+            const Divider(),
             ListTile(
+              onTap: () {
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    builder: (context) => const ReceiptsScreen()));
+              },
+              leading: const Icon(
+                Icons.receipt,
+                color: Colors.white,
+              ),
               title: TextWidget(
-                text: 'About iParkPatrol',
+                text: 'Receipt',
                 fontSize: 14,
                 fontFamily: 'Bold',
+                color: Colors.white,
               ),
             ),
+            const Divider(),
+            ListTile(
+              onTap: () {
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    builder: (context) => const ItemsScreen()));
+              },
+              leading: const Icon(
+                Icons.list,
+                color: Colors.white,
+              ),
+              title: TextWidget(
+                text: 'Items',
+                fontSize: 14,
+                fontFamily: 'Bold',
+                color: Colors.white,
+              ),
+            ),
+            const Divider(),
           ],
         ),
       )),
