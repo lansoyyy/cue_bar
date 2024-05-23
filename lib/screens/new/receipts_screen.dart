@@ -36,8 +36,102 @@ class _ReceiptsScreenState extends State<ReceiptsScreen> {
           color: Colors.white,
         ),
       ),
-      body: const Column(
-        children: [],
+      body: Column(
+        children: [
+          const SizedBox(
+            height: 20,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 50),
+            child: Align(
+              alignment: Alignment.topLeft,
+              child: TextWidget(
+                text: 'Date and Time',
+                fontSize: 32,
+                fontFamily: 'Bold',
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(50, 10, 50, 20),
+            child: Container(
+              height: 50,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.black,
+                    width: 2,
+                  ),
+                  borderRadius: BorderRadius.circular(100)),
+              child: Padding(
+                padding: const EdgeInsets.only(left: 10, right: 10),
+                child: TextFormField(
+                  style: const TextStyle(
+                      color: Colors.black, fontFamily: 'Regular', fontSize: 14),
+                  onChanged: (value) {
+                    setState(() {
+                      nameSearched = value;
+                    });
+                  },
+                  decoration: const InputDecoration(
+                      labelStyle: TextStyle(
+                        color: Colors.black,
+                      ),
+                      hintText: 'Search',
+                      hintStyle: TextStyle(fontFamily: 'Bold'),
+                      prefixIcon: Icon(
+                        Icons.search,
+                        color: Colors.grey,
+                      )),
+                  controller: searchController,
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(50, 10, 50, 20),
+            child: ListTile(
+              leading: SizedBox(
+                width: 300,
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.receipt,
+                      size: 40,
+                    ),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        TextWidget(
+                          text: 'P500.00',
+                          fontSize: 18,
+                          fontFamily: 'Bold',
+                        ),
+                        TextWidget(
+                          text: 'Time',
+                          fontSize: 14,
+                          fontFamily: 'Medium',
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              trailing: TextWidget(
+                text: '#1-1000',
+                fontSize: 16,
+                fontFamily: 'Bold',
+                color: Colors.grey,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
