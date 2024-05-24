@@ -22,6 +22,10 @@ class _HomeScreenState extends State<HomeScreen> {
   final searchController = TextEditingController();
   String nameSearched = '';
 
+  int count = 0;
+
+  double total = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               child: Center(
                 child: TextWidget(
-                  text: '0',
+                  text: count.toString(),
                   fontSize: 18,
                   color: Colors.white,
                   fontFamily: 'Bold',
@@ -91,7 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     color: Colors.white,
                   ),
                   TextWidget(
-                    text: 'P500.00',
+                    text: 'P$total',
                     fontSize: 32,
                     fontFamily: 'Bold',
                     color: Colors.white,
@@ -136,36 +140,80 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(50, 10, 50, 20),
-            child: ListTile(
-              leading: SizedBox(
-                width: 300,
-                child: Row(
+          StreamBuilder<QuerySnapshot>(
+              stream:
+                  FirebaseFirestore.instance.collection('Items').snapshots(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.hasError) {
+                  print(snapshot.error);
+                  return const Center(child: Text('Error'));
+                }
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Padding(
+                    padding: EdgeInsets.only(top: 50),
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        color: Colors.black,
+                      ),
+                    ),
+                  );
+                }
+
+                final data = snapshot.requireData;
+                return Column(
                   children: [
-                    Container(
-                      width: 50,
-                      height: 50,
-                      color: Colors.blue,
-                    ),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    TextWidget(
-                      text: 'Title here',
-                      fontSize: 18,
-                      fontFamily: 'Bold',
-                    ),
+                    for (int i = 0; i < data.docs.length; i++)
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(50, 10, 50, 20),
+                        child: ListTile(
+                          onTap: () {
+                            setState(() {
+                              count++;
+                              total += data.docs[i]['price'];
+                            });
+                          },
+                          leading: SizedBox(
+                            width: 300,
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 50,
+                                  height: 50,
+                                  color: Colors.blue,
+                                ),
+                                const SizedBox(
+                                  width: 20,
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    TextWidget(
+                                      text: data.docs[i]['name'],
+                                      fontSize: 18,
+                                      fontFamily: 'Bold',
+                                    ),
+                                    TextWidget(
+                                      text: data.docs[i]['desc'],
+                                      fontSize: 14,
+                                      fontFamily: 'Medium',
+                                      color: Colors.grey,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          trailing: TextWidget(
+                            text: 'P${data.docs[i]['price']}',
+                            fontSize: 18,
+                            fontFamily: 'Bold',
+                          ),
+                        ),
+                      ),
                   ],
-                ),
-              ),
-              trailing: TextWidget(
-                text: 'P500.00',
-                fontSize: 18,
-                fontFamily: 'Bold',
-              ),
-            ),
-          ),
+                );
+              }),
         ],
       ),
     );
