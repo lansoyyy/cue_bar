@@ -28,6 +28,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   double total = 0;
 
+  List items = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,8 +88,10 @@ class _HomeScreenState extends State<HomeScreen> {
             child: GestureDetector(
               onTap: () {
                 newtotal = total;
-                Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (context) => SalesPage()));
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => SalesPage(
+                          items: items,
+                        )));
               },
               child: Container(
                 width: double.infinity,
@@ -178,6 +182,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: ListTile(
                           onTap: () {
                             setState(() {
+                              items.add(data.docs[i]);
                               count++;
                               total += data.docs[i]['price'];
                             });

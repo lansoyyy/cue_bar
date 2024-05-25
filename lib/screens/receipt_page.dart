@@ -209,8 +209,8 @@ class ReceiptScreen extends StatelessWidget {
                     itemBuilder: (context, index) {
                       return pw.Container(
                         margin: const pw.EdgeInsets.symmetric(vertical: 4.0),
-                        child: _buildItem1(items[index]['name'],
-                            items[index]['price'], items[index]['qty']),
+                        child: _buildItem1(
+                            items[index]['name'], items[index]['price'], 1),
                       );
                     },
                   ),

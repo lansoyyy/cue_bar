@@ -18,7 +18,9 @@ import 'package:flutter/widgets.dart';
 double newtotal = 0;
 
 class SalesPage extends StatefulWidget {
-  const SalesPage({super.key});
+  List items;
+
+  SalesPage({super.key, required this.items});
 
   @override
   State<SalesPage> createState() => _SalesPageState();
@@ -201,6 +203,9 @@ class _SalesPageState extends State<SalesPage> {
                 if (mytotal < double.parse(cash.text)) {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => PaymentPage(
+                            time: (220 * int.parse(hour.text)).toDouble(),
+                            items: widget.items,
+                            user: _selectedOption1,
                             payment: double.parse(cash.text),
                             total: mytotal,
                           )));
