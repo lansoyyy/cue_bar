@@ -10,6 +10,7 @@ import 'package:cue_bar/widgets/text_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
 
 class ReceiptsScreen extends StatefulWidget {
   const ReceiptsScreen({super.key});
@@ -36,103 +37,95 @@ class _ReceiptsScreenState extends State<ReceiptsScreen> {
           color: Colors.white,
         ),
       ),
-      body: Column(
-        children: [
-          const SizedBox(
-            height: 20,
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 50),
-            child: Align(
-              alignment: Alignment.topLeft,
-              child: TextWidget(
-                text: 'Date and Time',
-                fontSize: 32,
-                fontFamily: 'Bold',
-              ),
-            ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(50, 10, 50, 20),
-            child: Container(
-              height: 50,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                  border: Border.all(
+      body: StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection('Receipts')
+              .where('day', isEqualTo: DateTime.now().day)
+              .where('month', isEqualTo: DateTime.now().month)
+              .where('year', isEqualTo: DateTime.now().year)
+              .snapshots(),
+          builder:
+              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.hasError) {
+              print(snapshot.error);
+              return const Center(child: Text('Error'));
+            }
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Padding(
+                padding: EdgeInsets.only(top: 50),
+                child: Center(
+                  child: CircularProgressIndicator(
                     color: Colors.black,
-                    width: 2,
                   ),
-                  borderRadius: BorderRadius.circular(100)),
-              child: Padding(
-                padding: const EdgeInsets.only(left: 10, right: 10),
-                child: TextFormField(
-                  style: const TextStyle(
-                      color: Colors.black, fontFamily: 'Regular', fontSize: 14),
-                  onChanged: (value) {
-                    setState(() {
-                      nameSearched = value;
-                    });
-                  },
-                  decoration: const InputDecoration(
-                      labelStyle: TextStyle(
-                        color: Colors.black,
+                ),
+              );
+            }
+
+            final data = snapshot.requireData;
+            return Column(
+              children: [
+                const SizedBox(
+                  height: 20,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 50),
+                  child: Align(
+                    alignment: Alignment.topLeft,
+                    child: TextWidget(
+                      text: DateFormat.yMMMd().format(DateTime.now()),
+                      fontSize: 32,
+                      fontFamily: 'Bold',
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                for (int i = 0; i < data.docs.length; i++)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(50, 10, 50, 20),
+                    child: ListTile(
+                      leading: SizedBox(
+                        width: 300,
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.receipt,
+                              size: 40,
+                            ),
+                            const SizedBox(
+                              width: 20,
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                TextWidget(
+                                  text: 'P${data.docs[i]['total']}',
+                                  fontSize: 18,
+                                  fontFamily: 'Bold',
+                                ),
+                                TextWidget(
+                                  text: DateFormat.yMMMd().add_jm().format(
+                                      data.docs[i]['dateTime'].toDate()),
+                                  fontSize: 14,
+                                  fontFamily: 'Medium',
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                      hintText: 'Search',
-                      hintStyle: TextStyle(fontFamily: 'Bold'),
-                      prefixIcon: Icon(
-                        Icons.search,
+                      trailing: TextWidget(
+                        text: '#1-${i + 1}',
+                        fontSize: 16,
+                        fontFamily: 'Bold',
                         color: Colors.grey,
-                      )),
-                  controller: searchController,
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(50, 10, 50, 20),
-            child: ListTile(
-              leading: SizedBox(
-                width: 300,
-                child: Row(
-                  children: [
-                    const Icon(
-                      Icons.receipt,
-                      size: 40,
+                      ),
                     ),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        TextWidget(
-                          text: 'P500.00',
-                          fontSize: 18,
-                          fontFamily: 'Bold',
-                        ),
-                        TextWidget(
-                          text: 'Time',
-                          fontSize: 14,
-                          fontFamily: 'Medium',
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              trailing: TextWidget(
-                text: '#1-1000',
-                fontSize: 16,
-                fontFamily: 'Bold',
-                color: Colors.grey,
-              ),
-            ),
-          ),
-        ],
-      ),
+                  ),
+              ],
+            );
+          }),
     );
   }
 }

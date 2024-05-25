@@ -11,6 +11,9 @@ Future addReceipt(name, total, change, List items) async {
     'items': items,
     'dateTime': DateTime.now(),
     'id': docUser.id,
+    'day': DateTime.now().day,
+    'month': DateTime.now().month,
+    'year': DateTime.now().year,
   };
 
   await docUser.set(json);
