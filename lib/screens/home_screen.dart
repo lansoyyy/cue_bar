@@ -4,9 +4,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cue_bar/screens/config_page.dart';
 import 'package:cue_bar/screens/new/create_customer_screen.dart';
 import 'package:cue_bar/screens/products_screen.dart';
+import 'package:cue_bar/screens/sales_pages/sales_page.dart';
 import 'package:cue_bar/services/add_table.dart';
 import 'package:cue_bar/widgets/drawer_widget.dart';
 import 'package:cue_bar/widgets/text_widget.dart';
+import 'package:cue_bar/widgets/toast_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -81,26 +83,33 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.all(10.0),
-            child: Container(
-              width: double.infinity,
-              height: 125,
-              color: Colors.teal,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  TextWidget(
-                    text: 'CHARGE',
-                    fontSize: 18,
-                    fontFamily: 'Medium',
-                    color: Colors.white,
-                  ),
-                  TextWidget(
-                    text: 'P$total',
-                    fontSize: 32,
-                    fontFamily: 'Bold',
-                    color: Colors.white,
-                  ),
-                ],
+            child: GestureDetector(
+              onTap: () {
+                newtotal = total;
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (context) => SalesPage()));
+              },
+              child: Container(
+                width: double.infinity,
+                height: 125,
+                color: Colors.teal,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextWidget(
+                      text: 'CHARGE',
+                      fontSize: 18,
+                      fontFamily: 'Medium',
+                      color: Colors.white,
+                    ),
+                    TextWidget(
+                      text: 'P$total',
+                      fontSize: 32,
+                      fontFamily: 'Bold',
+                      color: Colors.white,
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -177,10 +186,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             width: 300,
                             child: Row(
                               children: [
-                                Container(
-                                  width: 50,
-                                  height: 50,
-                                  color: Colors.blue,
+                                const Icon(
+                                  Icons.folder_open_outlined,
+                                  size: 50,
                                 ),
                                 const SizedBox(
                                   width: 20,

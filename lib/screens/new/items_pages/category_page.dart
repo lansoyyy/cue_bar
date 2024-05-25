@@ -115,10 +115,9 @@ class _CategoryPageState extends State<CategoryPage> {
                             width: 300,
                             child: Row(
                               children: [
-                                Container(
-                                  width: 50,
-                                  height: 50,
-                                  color: Colors.blue,
+                                const Icon(
+                                  Icons.folder_open_outlined,
+                                  size: 50,
                                 ),
                                 const SizedBox(
                                   width: 20,
