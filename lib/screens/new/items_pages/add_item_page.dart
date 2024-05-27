@@ -14,7 +14,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 class AddItemPage extends StatefulWidget {
-  const AddItemPage({super.key});
+  bool inEdit;
+  dynamic data;
+
+  AddItemPage({
+    super.key,
+    this.data = const {},
+    this.inEdit = false,
+  });
 
   @override
   State<AddItemPage> createState() => _AddItemPageState();
@@ -30,6 +37,13 @@ class _AddItemPageState extends State<AddItemPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.inEdit) {
+      name.text = widget.data['name'];
+      desc.text = widget.data['desc'];
+      price.text = widget.data['price'].toString();
+      sku.text = widget.data['sku'];
+      _selectedOption1 = widget.data['categ'];
+    }
     return Scaffold(
       appBar: AppBar(
         foregroundColor: Colors.white,
@@ -165,15 +179,33 @@ class _AddItemPageState extends State<AddItemPage> {
               const SizedBox(
                 height: 50,
               ),
-              ButtonWidget(
-                color: Colors.black,
-                label: 'Add',
-                onPressed: () {
-                  addItem(name.text, desc.text, sku.text, _selectedOption1,
-                      double.parse(price.text));
-                  Navigator.pop(context);
-                },
-              ),
+              widget.inEdit
+                  ? ButtonWidget(
+                      color: Colors.black,
+                      label: 'Update',
+                      onPressed: () async {
+                        await FirebaseFirestore.instance
+                            .collection('Items')
+                            .doc(widget.data.id)
+                            .update({
+                          'name': name.text,
+                          'desc': desc.text,
+                          'sku': sku.text,
+                          'price': double.parse(price.text),
+                          'categ': _selectedOption1,
+                        });
+                        Navigator.pop(context);
+                      },
+                    )
+                  : ButtonWidget(
+                      color: Colors.black,
+                      label: 'Add',
+                      onPressed: () {
+                        addItem(name.text, desc.text, sku.text,
+                            _selectedOption1, double.parse(price.text));
+                        Navigator.pop(context);
+                      },
+                    )
             ],
           ),
         ),

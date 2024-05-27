@@ -31,8 +31,8 @@ class _ItemsPageState extends State<ItemsPage> {
             Icons.add,
           ),
           onPressed: () {
-            Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const AddItemPage()));
+            Navigator.of(context)
+                .push(MaterialPageRoute(builder: (context) => AddItemPage()));
           },
         ),
         appBar: AppBar(
@@ -103,10 +103,92 @@ class _ItemsPageState extends State<ItemsPage> {
                               ],
                             ),
                           ),
-                          trailing: TextWidget(
-                            text: 'P${data.docs[index]['price']}',
-                            fontSize: 18,
-                            fontFamily: 'Bold',
+                          trailing: SizedBox(
+                            width: 175,
+                            child: Row(
+                              children: [
+                                TextWidget(
+                                  text: 'P${data.docs[index]['price']}',
+                                  fontSize: 18,
+                                  fontFamily: 'Bold',
+                                ),
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                IconButton(
+                                  onPressed: () {
+                                    Navigator.of(context)
+                                        .push(MaterialPageRoute(
+                                            builder: (context) => AddItemPage(
+                                                  inEdit: true,
+                                                  data: data.docs[index],
+                                                )));
+                                  },
+                                  icon: const Icon(
+                                    Icons.edit,
+                                    color: Colors.green,
+                                    size: 35,
+                                  ),
+                                ),
+                                IconButton(
+                                  onPressed: () {
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialog(
+                                              title: const Text(
+                                                'Delete Confirmation',
+                                                style: TextStyle(
+                                                    fontFamily: 'QBold',
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              content: const Text(
+                                                'Are you sure you want to delete this item?',
+                                                style: TextStyle(
+                                                    fontFamily: 'QRegular'),
+                                              ),
+                                              actions: <Widget>[
+                                                MaterialButton(
+                                                  onPressed: () =>
+                                                      Navigator.of(context)
+                                                          .pop(true),
+                                                  child: const Text(
+                                                    'Close',
+                                                    style: TextStyle(
+                                                        fontFamily: 'QRegular',
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                ),
+                                                MaterialButton(
+                                                  onPressed: () async {
+                                                    await FirebaseFirestore
+                                                        .instance
+                                                        .collection('Items')
+                                                        .doc(
+                                                            data.docs[index].id)
+                                                        .delete();
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: const Text(
+                                                    'Continue',
+                                                    style: TextStyle(
+                                                        fontFamily: 'QRegular',
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                ),
+                                              ],
+                                            ));
+                                  },
+                                  icon: const Icon(
+                                    Icons.delete_outline_outlined,
+                                    color: Colors.red,
+                                    size: 35,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
