@@ -28,6 +28,7 @@ class PaymentPage extends StatefulWidget {
   double total;
   double payment;
   String user;
+  String mode;
 
   double time;
 
@@ -35,6 +36,7 @@ class PaymentPage extends StatefulWidget {
 
   PaymentPage(
       {super.key,
+      required this.mode,
       required this.time,
       required this.total,
       required this.payment,
@@ -46,6 +48,7 @@ class PaymentPage extends StatefulWidget {
 }
 
 class _PaymentPageState extends State<PaymentPage> {
+  final refno = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,81 +68,126 @@ class _PaymentPageState extends State<PaymentPage> {
         ),
       ),
       body: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const SizedBox(
-              height: 50,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    TextWidget(
-                      text: 'P${widget.total}',
-                      fontSize: 48,
-                      fontFamily: 'Bold',
-                      color: Colors.green,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(
+                height: 50,
+              ),
+              widget.mode == 'Cash'
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            TextWidget(
+                              text: 'P${widget.total}',
+                              fontSize: 48,
+                              fontFamily: 'Bold',
+                              color: Colors.green,
+                            ),
+                            TextWidget(
+                              text: 'Total Payment',
+                              fontSize: 14,
+                              fontFamily: 'Medium',
+                              color: Colors.black,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          width: 25,
+                        ),
+                        const SizedBox(
+                            height: 100,
+                            child: VerticalDivider(
+                              color: Colors.black,
+                            )),
+                        const SizedBox(
+                          width: 25,
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            TextWidget(
+                              text: 'P${widget.payment - widget.total}',
+                              fontSize: 48,
+                              fontFamily: 'Bold',
+                              color: Colors.green,
+                            ),
+                            TextWidget(
+                              text: 'Change',
+                              fontSize: 14,
+                              fontFamily: 'Medium',
+                              color: Colors.black,
+                            ),
+                          ],
+                        ),
+                      ],
+                    )
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        TextWidget(
+                          text: 'P${widget.total}',
+                          fontSize: 48,
+                          fontFamily: 'Bold',
+                          color: Colors.green,
+                        ),
+                        TextWidget(
+                          text: 'Total Payment',
+                          fontSize: 14,
+                          fontFamily: 'Medium',
+                          color: Colors.black,
+                        ),
+                      ],
                     ),
-                    TextWidget(
-                      text: 'Total Paid',
-                      fontSize: 14,
-                      fontFamily: 'Medium',
-                      color: Colors.black,
+              widget.mode == 'Card'
+                  ? TextFieldWidget(
+                      controller: refno,
+                      label: 'Reference Number',
+                    )
+                  : const SizedBox(
+                      height: 20,
                     ),
-                  ],
-                ),
-                const SizedBox(
-                  width: 25,
-                ),
-                const SizedBox(
-                    height: 100,
-                    child: VerticalDivider(
-                      color: Colors.black,
-                    )),
-                const SizedBox(
-                  width: 25,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    TextWidget(
-                      text: 'P${widget.payment - widget.total}',
-                      fontSize: 48,
-                      fontFamily: 'Bold',
-                      color: Colors.green,
+              widget.mode == 'GCash'
+                  ? Image.asset(
+                      'assets/images/gcash.jpg',
+                      height: 800,
+                    )
+                  : const SizedBox(
+                      height: 20,
                     ),
-                    TextWidget(
-                      text: 'Change',
-                      fontSize: 14,
-                      fontFamily: 'Medium',
-                      color: Colors.black,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 100,
-            ),
-            ButtonWidget(
-              color: Colors.green,
-              label: 'PAID',
-              onPressed: () {
-                // add receipt
-                addReceipt(widget.user, widget.total,
-                    widget.payment - widget.total, []);
-                Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (context) => const HomeScreen()));
-                generateReceiptPdf(
-                    widget.items, widget.time.toInt(), widget.total.toInt());
-              },
-            ),
-          ],
+              const SizedBox(
+                height: 50,
+              ),
+              ButtonWidget(
+                color: Colors.green,
+                label: 'PAID',
+                onPressed: () {
+                  // add receipt
+                  addReceipt(
+                      widget.user,
+                      widget.total,
+                      widget.payment - widget.total,
+                      [],
+                      widget.mode,
+                      refno.text);
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(
+                      builder: (context) => const HomeScreen()));
+                  generateReceiptPdf(
+                      widget.items, widget.time.toInt(), widget.total.toInt());
+                },
+              ),
+              const SizedBox(
+                height: 50,
+              ),
+            ],
+          ),
         ),
       ),
     );

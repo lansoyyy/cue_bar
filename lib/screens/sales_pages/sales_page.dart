@@ -203,6 +203,51 @@ class _SalesPageState extends State<SalesPage> {
                 if (mytotal < double.parse(cash.text)) {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => PaymentPage(
+                            mode: 'Cash',
+                            time: (220 * int.parse(hour.text)).toDouble(),
+                            items: widget.items,
+                            user: _selectedOption1,
+                            payment: double.parse(cash.text),
+                            total: mytotal,
+                          )));
+                } else {
+                  showToast('Insufficient cash received!');
+                }
+              },
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            ButtonWidget(
+              color: Colors.blue,
+              label: 'GCASH',
+              onPressed: () {
+                if (mytotal < double.parse(cash.text)) {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => PaymentPage(
+                            mode: 'GCash',
+                            time: (220 * int.parse(hour.text)).toDouble(),
+                            items: widget.items,
+                            user: _selectedOption1,
+                            payment: double.parse(cash.text),
+                            total: mytotal,
+                          )));
+                } else {
+                  showToast('Insufficient cash received!');
+                }
+              },
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            ButtonWidget(
+              color: Colors.amber,
+              label: 'Debit/Credit',
+              onPressed: () {
+                if (mytotal < double.parse(cash.text)) {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => PaymentPage(
+                            mode: 'Card',
                             time: (220 * int.parse(hour.text)).toDouble(),
                             items: widget.items,
                             user: _selectedOption1,
