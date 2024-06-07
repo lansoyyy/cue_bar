@@ -169,15 +169,15 @@ class _PaymentPageState extends State<PaymentPage> {
                 color: Colors.green,
                 label: 'PAID',
                 onPressed: () {
-                  // addReceipt(
-                  //     widget.user,
-                  //     widget.total,
-                  //     widget.payment - widget.total,
-                  //     [],
-                  //     widget.mode,
-                  //     refno.text);
-                  // Navigator.of(context).pushReplacement(MaterialPageRoute(
-                  //     builder: (context) => const HomeScreen()));
+                  addReceipt(
+                      widget.user,
+                      widget.total,
+                      widget.payment - widget.total,
+                      [],
+                      widget.mode,
+                      refno.text);
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(
+                      builder: (context) => const HomeScreen()));
                   generateReceiptPdf(
                       widget.items, widget.time.toInt(), widget.total.toInt());
                 },
