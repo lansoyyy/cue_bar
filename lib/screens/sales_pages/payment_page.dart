@@ -169,16 +169,15 @@ class _PaymentPageState extends State<PaymentPage> {
                 color: Colors.green,
                 label: 'PAID',
                 onPressed: () {
-                  // add receipt
-                  addReceipt(
-                      widget.user,
-                      widget.total,
-                      widget.payment - widget.total,
-                      [],
-                      widget.mode,
-                      refno.text);
-                  Navigator.of(context).pushReplacement(MaterialPageRoute(
-                      builder: (context) => const HomeScreen()));
+                  // addReceipt(
+                  //     widget.user,
+                  //     widget.total,
+                  //     widget.payment - widget.total,
+                  //     [],
+                  //     widget.mode,
+                  //     refno.text);
+                  // Navigator.of(context).pushReplacement(MaterialPageRoute(
+                  //     builder: (context) => const HomeScreen()));
                   generateReceiptPdf(
                       widget.items, widget.time.toInt(), widget.total.toInt());
                 },
@@ -194,6 +193,14 @@ class _PaymentPageState extends State<PaymentPage> {
   }
 
   Future<void> generateReceiptPdf(List items, int timerate, int total) async {
+    DateTime now = DateTime.now();
+
+    // Subtract 3 hours from the current date and time
+    DateTime subtractedDateTime =
+        now.subtract(Duration(hours: widget.time.toInt()));
+
+    // Define the format you want for the date and time
+    DateFormat dateFormat = DateFormat('HH:mm: aa');
     // Initialize items for testing
 
     // Calculate total
@@ -233,12 +240,10 @@ class _PaymentPageState extends State<PaymentPage> {
               mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
               children: [
                 pw.Text(
-                  'Time rate:',
-                  style: const pw.TextStyle(fontSize: 24),
+                  '${dateFormat.format(subtractedDateTime)} - ${dateFormat.format(now)}',
                 ),
                 pw.Text(
                   'P$timerate.00',
-                  style: const pw.TextStyle(fontSize: 18),
                 ),
               ],
             ),
