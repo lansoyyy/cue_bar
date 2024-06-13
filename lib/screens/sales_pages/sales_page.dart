@@ -36,6 +36,7 @@ class _SalesPageState extends State<SalesPage> {
   double mytotal = 0;
 
   String _selectedOption1 = '';
+  String _selectedOption2 = '';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -182,6 +183,101 @@ class _SalesPageState extends State<SalesPage> {
                             onChanged: (newValue) {
                               setState(() {
                                 _selectedOption1 = newValue!;
+                              });
+                            },
+                          ),
+                        ),
+                      );
+                    }),
+              ],
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                RichText(
+                  text: const TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'Table',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontFamily: 'Bold',
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      TextSpan(
+                        text: ' *',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontFamily: 'Bold',
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('Tables')
+                        .where('started', isEqualTo: true)
+                        .snapshots(),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<QuerySnapshot> snapshot) {
+                      if (snapshot.hasError) {
+                        print(snapshot.error);
+                        return const Center(child: Text('Error'));
+                      }
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Padding(
+                          padding: EdgeInsets.only(top: 50),
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.black,
+                            ),
+                          ),
+                        );
+                      }
+
+                      final data = snapshot.requireData;
+
+                      return Container(
+                        width: 500,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(5),
+                          border: Border.all(
+                            color: Colors.black,
+                          ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 10, right: 10),
+                          child: DropdownButton<String>(
+                            underline: const SizedBox(),
+                            value: _selectedOption2 == ''
+                                ? 'Table 1'
+                                : _selectedOption2,
+                            hint: const Text('Select Table'),
+                            items: <String>[
+                              for (int i = 0; i < data.docs.length; i++)
+                                'Table ${i + 1}'
+                            ].map((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                            onChanged: (newValue) {
+                              setState(() {
+                                _selectedOption2 = newValue!;
                               });
                             },
                           ),
