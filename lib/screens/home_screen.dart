@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cue_bar/screens/config_page.dart';
 import 'package:cue_bar/screens/new/create_customer_screen.dart';
+import 'package:cue_bar/screens/new/table_page.dart';
 import 'package:cue_bar/screens/products_screen.dart';
 import 'package:cue_bar/screens/sales_pages/sales_page.dart';
 import 'package:cue_bar/services/add_table.dart';
@@ -70,6 +71,15 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => const TableScreen()));
+            },
+            icon: const Icon(
+              Icons.table_restaurant_outlined,
+            ),
+          ),
           IconButton(
             onPressed: () {
               Navigator.of(context).push(MaterialPageRoute(

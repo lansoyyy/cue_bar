@@ -9,6 +9,8 @@ Future addTable() async {
   final json = {
     'dateTime': DateTime.now(),
     'id': docUser.id,
+    'started': false,
+    'timestarted': '',
   };
 
   await docUser.set(json);
