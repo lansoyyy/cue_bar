@@ -86,7 +86,28 @@ class DrawerWidget extends StatelessWidget {
                 color: Colors.white,
               ),
             ),
-            const Divider(),
+            const Divider(
+              color: Colors.white,
+            ),
+            ListTile(
+              onTap: () {
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    builder: (context) => const ItemsScreen()));
+              },
+              leading: const Icon(
+                Icons.report,
+                color: Colors.white,
+              ),
+              title: TextWidget(
+                text: 'Reports',
+                fontSize: 14,
+                fontFamily: 'Bold',
+                color: Colors.white,
+              ),
+            ),
+            const Divider(
+              color: Colors.white,
+            ),
             ListTile(
               onTap: () {
                 Navigator.of(context).pushReplacement(MaterialPageRoute(
