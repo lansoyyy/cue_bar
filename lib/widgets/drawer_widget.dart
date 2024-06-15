@@ -1,6 +1,7 @@
 import 'package:cue_bar/screens/home_screen.dart';
 import 'package:cue_bar/screens/new/items_screen.dart';
 import 'package:cue_bar/screens/new/receipts_screen.dart';
+import 'package:cue_bar/screens/new/reports_screen.dart';
 import 'package:cue_bar/screens/receipt_page.dart';
 import 'package:flutter/material.dart';
 import 'package:cue_bar/widgets/text_widget.dart';
@@ -92,7 +93,7 @@ class DrawerWidget extends StatelessWidget {
             ListTile(
               onTap: () {
                 Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (context) => const ItemsScreen()));
+                    builder: (context) => const ReportScreen()));
               },
               leading: const Icon(
                 Icons.report,
