@@ -192,7 +192,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: ListTile(
                           onTap: () {
                             setState(() {
-                              items.add(data.docs[i]);
+                              items.add(data.docs[i].data());
                               count++;
                               total += data.docs[i]['price'];
                             });

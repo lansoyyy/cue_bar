@@ -112,8 +112,6 @@ class ReceiptScreen extends StatelessWidget {
                 color: Colors.black,
                 label: 'Print Receipt',
                 onPressed: () {
-                  print(timerate);
-                  print(total);
                   generateReceiptPdf(items, timerate, total);
                 },
               ),

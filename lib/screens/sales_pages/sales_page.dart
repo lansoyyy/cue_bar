@@ -237,6 +237,17 @@ class _SalesPageState extends State<SalesPage> {
 
                         final data = snapshot.requireData;
 
+                        if (mytotal == 0) {
+                          DateTime currentDateTime = DateTime.now();
+
+                          Duration difference = currentDateTime.difference(
+                              data.docs.first['timestarted'].toDate());
+
+                          int hoursDifference = difference.inHours;
+                          mytotal = (220 * hoursDifference).toDouble() +
+                              newtotal.toDouble();
+                        }
+
                         return data.docs.isNotEmpty
                             ? SizedBox(
                                 width: 500,
@@ -310,7 +321,7 @@ class _SalesPageState extends State<SalesPage> {
                 color: Colors.green,
                 label: 'CASH',
                 onPressed: () {
-                  if (mytotal < double.parse(cash.text)) {
+                  if (mytotal <= double.parse(cash.text)) {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => PaymentPage(
                               mode: 'Cash',

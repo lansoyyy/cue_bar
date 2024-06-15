@@ -173,7 +173,7 @@ class _PaymentPageState extends State<PaymentPage> {
                       widget.user,
                       widget.total,
                       widget.payment - widget.total,
-                      [],
+                      widget.items,
                       widget.mode,
                       refno.text);
                   Navigator.of(context).pushReplacement(MaterialPageRoute(
