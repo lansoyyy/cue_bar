@@ -145,6 +145,18 @@ class _TableScreenState extends State<TableScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
+                                data.docs[index]['started']
+                                    ? Text(
+                                        'Hours: ${DateTime.now().difference(data.docs[index]['timestarted'].toDate()).inHours.toString()}, Minutes: ${DateTime.now().difference(data.docs[index]['timestarted'].toDate()).inMinutes.toString()}',
+                                        style: const TextStyle(
+                                            fontSize: 18,
+                                            fontFamily: 'Bold',
+                                            fontWeight: FontWeight.bold),
+                                      )
+                                    : const SizedBox(),
+                                const SizedBox(
+                                  height: 20,
+                                ),
                                 MaterialButton(
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10),
