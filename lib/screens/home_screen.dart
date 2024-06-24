@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cue_bar/screens/config_page.dart';
+import 'package:cue_bar/screens/customers_screen.dart';
 import 'package:cue_bar/screens/new/create_customer_screen.dart';
 import 'package:cue_bar/screens/new/table_page.dart';
 import 'package:cue_bar/screens/products_screen.dart';
@@ -83,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
             onPressed: () {
               Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const CreateCustomerScreen()));
+                  builder: (context) => const CustomersScreen()));
             },
             icon: const Icon(
               Icons.group_add_outlined,
