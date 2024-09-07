@@ -105,7 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
               });
             },
             icon: const Icon(
-              Icons.clear,
+              Icons.refresh,
             ),
           ),
           IconButton(
