@@ -1,3 +1,4 @@
+import 'package:cue_bar/screens/config_page.dart';
 import 'package:cue_bar/screens/home_screen.dart';
 import 'package:cue_bar/screens/new/items_screen.dart';
 import 'package:cue_bar/screens/new/receipts_screen.dart';
@@ -120,6 +121,25 @@ class DrawerWidget extends StatelessWidget {
               ),
               title: TextWidget(
                 text: 'Items',
+                fontSize: 14,
+                fontFamily: 'Bold',
+                color: Colors.white,
+              ),
+            ),
+            const Divider(
+              color: Colors.white,
+            ),
+            ListTile(
+              onTap: () {
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    builder: (context) => const ConfigPage()));
+              },
+              leading: const Icon(
+                Icons.settings,
+                color: Colors.white,
+              ),
+              title: TextWidget(
+                text: 'Settings',
                 fontSize: 14,
                 fontFamily: 'Bold',
                 color: Colors.white,

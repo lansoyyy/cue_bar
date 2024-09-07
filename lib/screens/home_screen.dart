@@ -24,6 +24,13 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getTime();
+  }
+
   final searchController = TextEditingController();
   String nameSearched = '';
 
@@ -32,6 +39,22 @@ class _HomeScreenState extends State<HomeScreen> {
   double total = 0;
 
   List items = [];
+
+  bool hasLoaded = false;
+
+  int newRate = 0;
+
+  getTime() async {
+    DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
+        .collection('Config') // Replace with your collection name
+        .doc('config') // Replace with your document ID
+        .get();
+
+    setState(() {
+      newRate = documentSnapshot['rate'];
+      hasLoaded = true;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -105,177 +128,186 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      body: hasLoaded
+          ? Column(
               children: [
-                GestureDetector(
-                  onTap: () {
-                    showCustomersDialog();
-                    // Navigator.of(context).push(MaterialPageRoute(
-                    //     builder: (context) => SalesPage(
-                    //           items: items,
-                    //         )));
-                  },
-                  child: Container(
-                    width: 400,
-                    height: 125,
-                    color: Colors.teal,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        TextWidget(
-                          text: 'CHARGE',
-                          fontSize: 18,
-                          fontFamily: 'Medium',
-                          color: Colors.white,
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          showCustomersDialog();
+                          // Navigator.of(context).push(MaterialPageRoute(
+                          //     builder: (context) => SalesPage(
+                          //           items: items,
+                          //         )));
+                        },
+                        child: Container(
+                          width: 400,
+                          height: 125,
+                          color: Colors.teal,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              TextWidget(
+                                text: 'CHARGE',
+                                fontSize: 18,
+                                fontFamily: 'Medium',
+                                color: Colors.white,
+                              ),
+                              TextWidget(
+                                text: 'P$total',
+                                fontSize: 32,
+                                fontFamily: 'Bold',
+                                color: Colors.white,
+                              ),
+                            ],
+                          ),
                         ),
-                        TextWidget(
-                          text: 'P$total',
-                          fontSize: 32,
-                          fontFamily: 'Bold',
-                          color: Colors.white,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    showCustomers();
-                  },
-                  child: Container(
-                    width: 400,
-                    height: 125,
-                    color: Colors.teal,
-                    child: Center(
-                      child: TextWidget(
-                        text: 'Checkout',
-                        fontSize: 32,
-                        fontFamily: 'Medium',
-                        color: Colors.white,
                       ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(50, 10, 50, 20),
-            child: Container(
-              height: 50,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.black,
-                    width: 2,
-                  ),
-                  borderRadius: BorderRadius.circular(100)),
-              child: Padding(
-                padding: const EdgeInsets.only(left: 10, right: 10),
-                child: TextFormField(
-                  style: const TextStyle(
-                      color: Colors.black, fontFamily: 'Regular', fontSize: 14),
-                  onChanged: (value) {
-                    setState(() {
-                      nameSearched = value;
-                    });
-                  },
-                  decoration: const InputDecoration(
-                      labelStyle: TextStyle(
-                        color: Colors.black,
-                      ),
-                      hintText: 'Search Item',
-                      hintStyle: TextStyle(fontFamily: 'Bold'),
-                      prefixIcon: Icon(
-                        Icons.search,
-                        color: Colors.grey,
-                      )),
-                  controller: searchController,
-                ),
-              ),
-            ),
-          ),
-          StreamBuilder<QuerySnapshot>(
-              stream:
-                  FirebaseFirestore.instance.collection('Items').snapshots(),
-              builder: (BuildContext context,
-                  AsyncSnapshot<QuerySnapshot> snapshot) {
-                if (snapshot.hasError) {
-                  print(snapshot.error);
-                  return const Center(child: Text('Error'));
-                }
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Padding(
-                    padding: EdgeInsets.only(top: 50),
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        color: Colors.black,
-                      ),
-                    ),
-                  );
-                }
-
-                final data = snapshot.requireData;
-                return Column(
-                  children: [
-                    for (int i = 0; i < data.docs.length; i++)
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(50, 10, 50, 20),
-                        child: ListTile(
-                          onTap: () {
-                            setState(() {
-                              items.add(data.docs[i].data());
-                              count++;
-                              total += data.docs[i]['price'];
-                            });
-                          },
-                          leading: SizedBox(
-                            width: 300,
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  Icons.folder_open_outlined,
-                                  size: 50,
-                                ),
-                                const SizedBox(
-                                  width: 20,
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    TextWidget(
-                                      text: data.docs[i]['name'],
-                                      fontSize: 18,
-                                      fontFamily: 'Bold',
-                                    ),
-                                    TextWidget(
-                                      text: data.docs[i]['desc'],
-                                      fontSize: 14,
-                                      fontFamily: 'Medium',
-                                      color: Colors.grey,
-                                    ),
-                                  ],
-                                ),
-                              ],
+                      GestureDetector(
+                        onTap: () {
+                          showCustomers();
+                        },
+                        child: Container(
+                          width: 400,
+                          height: 125,
+                          color: Colors.teal,
+                          child: Center(
+                            child: TextWidget(
+                              text: 'Checkout',
+                              fontSize: 32,
+                              fontFamily: 'Medium',
+                              color: Colors.white,
                             ),
                           ),
-                          trailing: TextWidget(
-                            text: 'P${data.docs[i]['price']}',
-                            fontSize: 18,
-                            fontFamily: 'Bold',
-                          ),
                         ),
                       ),
-                  ],
-                );
-              }),
-        ],
-      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(50, 10, 50, 20),
+                  child: Container(
+                    height: 50,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.black,
+                          width: 2,
+                        ),
+                        borderRadius: BorderRadius.circular(100)),
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 10, right: 10),
+                      child: TextFormField(
+                        style: const TextStyle(
+                            color: Colors.black,
+                            fontFamily: 'Regular',
+                            fontSize: 14),
+                        onChanged: (value) {
+                          setState(() {
+                            nameSearched = value;
+                          });
+                        },
+                        decoration: const InputDecoration(
+                            labelStyle: TextStyle(
+                              color: Colors.black,
+                            ),
+                            hintText: 'Search Item',
+                            hintStyle: TextStyle(fontFamily: 'Bold'),
+                            prefixIcon: Icon(
+                              Icons.search,
+                              color: Colors.grey,
+                            )),
+                        controller: searchController,
+                      ),
+                    ),
+                  ),
+                ),
+                StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('Items')
+                        .snapshots(),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<QuerySnapshot> snapshot) {
+                      if (snapshot.hasError) {
+                        print(snapshot.error);
+                        return const Center(child: Text('Error'));
+                      }
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Padding(
+                          padding: EdgeInsets.only(top: 50),
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.black,
+                            ),
+                          ),
+                        );
+                      }
+
+                      final data = snapshot.requireData;
+                      return Column(
+                        children: [
+                          for (int i = 0; i < data.docs.length; i++)
+                            Padding(
+                              padding:
+                                  const EdgeInsets.fromLTRB(50, 10, 50, 20),
+                              child: ListTile(
+                                onTap: () {
+                                  setState(() {
+                                    items.add(data.docs[i].data());
+                                    count++;
+                                    total += data.docs[i]['price'];
+                                  });
+                                },
+                                leading: SizedBox(
+                                  width: 300,
+                                  child: Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.folder_open_outlined,
+                                        size: 50,
+                                      ),
+                                      const SizedBox(
+                                        width: 20,
+                                      ),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          TextWidget(
+                                            text: data.docs[i]['name'],
+                                            fontSize: 18,
+                                            fontFamily: 'Bold',
+                                          ),
+                                          TextWidget(
+                                            text: data.docs[i]['desc'],
+                                            fontSize: 14,
+                                            fontFamily: 'Medium',
+                                            color: Colors.grey,
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                trailing: TextWidget(
+                                  text: 'P${data.docs[i]['price']}',
+                                  fontSize: 18,
+                                  fontFamily: 'Bold',
+                                ),
+                              ),
+                            ),
+                        ],
+                      );
+                    }),
+              ],
+            )
+          : const Center(
+              child: CircularProgressIndicator(),
+            ),
     );
   }
 
@@ -635,7 +667,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       data.docs[index].id,
                                                   time: ((minutesDifference /
                                                               60) *
-                                                          220)
+                                                          newRate)
                                                       .toInt(),
                                                   user: data.docs[index],
                                                   total: mytotal,
