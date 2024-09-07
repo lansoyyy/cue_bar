@@ -11,6 +11,10 @@ Future addCustomer(name, email, number, address) async {
     'address': address,
     'dateTime': DateTime.now(),
     'id': docUser.id,
+    'items': [],
+    'tableName': '',
+    'tablePrice': 0,
+    'table': '',
   };
 
   await docUser.set(json);

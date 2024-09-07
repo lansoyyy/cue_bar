@@ -18,9 +18,21 @@ import 'package:flutter/widgets.dart';
 double newtotal = 0;
 
 class SalesPage extends StatefulWidget {
+  dynamic user;
   List items;
+  int total;
+  int time;
+  String tableId;
+  String customerId;
 
-  SalesPage({super.key, required this.items});
+  SalesPage(
+      {super.key,
+      required this.items,
+      required this.customerId,
+      required this.tableId,
+      required this.user,
+      required this.total,
+      required this.time});
 
   @override
   State<SalesPage> createState() => _SalesPageState();
@@ -29,13 +41,11 @@ class SalesPage extends StatefulWidget {
 class _SalesPageState extends State<SalesPage> {
   final cash = TextEditingController(text: newtotal.toInt().toString());
 
-  double mytotal = 0;
-
   int table = 0;
 
   int hour = 0;
 
-  String _selectedOption1 = '';
+  final String _selectedOption1 = '';
   final String _selectedOption2 = '';
   @override
   Widget build(BuildContext context) {
@@ -64,13 +74,13 @@ class _SalesPageState extends State<SalesPage> {
                 height: 20,
               ),
               TextWidget(
-                text: 'Total Amount of Items',
+                text: 'Total Amount to Pay',
                 fontSize: 18,
                 fontFamily: 'Medium',
                 color: Colors.black,
               ),
               TextWidget(
-                text: 'P${mytotal == 0 ? newtotal : mytotal}',
+                text: '${widget.total + widget.time}',
                 fontSize: 48,
                 fontFamily: 'Bold',
                 color: Colors.green,
@@ -84,235 +94,15 @@ class _SalesPageState extends State<SalesPage> {
                 controller: cash,
                 label: 'Cash Received',
               ),
-              const SizedBox(
-                height: 10,
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  RichText(
-                    text: const TextSpan(
-                      children: [
-                        TextSpan(
-                          text: 'Customer',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontFamily: 'Bold',
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        TextSpan(
-                          text: ' *',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontFamily: 'Bold',
-                            color: Colors.red,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  StreamBuilder<QuerySnapshot>(
-                      stream: FirebaseFirestore.instance
-                          .collection('Customers')
-                          .snapshots(),
-                      builder: (BuildContext context,
-                          AsyncSnapshot<QuerySnapshot> snapshot) {
-                        if (snapshot.hasError) {
-                          print(snapshot.error);
-                          return const Center(child: Text('Error'));
-                        }
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Padding(
-                            padding: EdgeInsets.only(top: 50),
-                            child: Center(
-                              child: CircularProgressIndicator(
-                                color: Colors.black,
-                              ),
-                            ),
-                          );
-                        }
-
-                        final data = snapshot.requireData;
-
-                        return Container(
-                          width: 500,
-                          height: 50,
-                          decoration: BoxDecoration(
-                            color: Colors.grey[200],
-                            borderRadius: BorderRadius.circular(5),
-                            border: Border.all(
-                              color: Colors.black,
-                            ),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 10, right: 10),
-                            child: DropdownButton<String>(
-                              underline: const SizedBox(),
-                              value: _selectedOption1 == ''
-                                  ? data.docs.first['name']
-                                  : _selectedOption1,
-                              hint: const Text('Select category'),
-                              items: <String>[
-                                for (int i = 0; i < data.docs.length; i++)
-                                  data.docs[i]['name']
-                              ].map((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value),
-                                );
-                              }).toList(),
-                              onChanged: (newValue) {
-                                setState(() {
-                                  _selectedOption1 = newValue!;
-                                });
-                              },
-                            ),
-                          ),
-                        );
-                      }),
-                ],
+              TextFieldWidget(
+                width: 500,
+                isRequred: false,
+                isEnabled: false,
+                controller: TextEditingController(
+                    text: 'Customer: ${widget.user['name']}'),
               ),
               const SizedBox(
                 height: 20,
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  RichText(
-                    text: const TextSpan(
-                      children: [
-                        TextSpan(
-                          text: 'Select Customer Table',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontFamily: 'Bold',
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        TextSpan(
-                          text: ' *',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontFamily: 'Bold',
-                            color: Colors.red,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  StreamBuilder<QuerySnapshot>(
-                      stream: FirebaseFirestore.instance
-                          .collection('Tables')
-                          .where('started', isEqualTo: true)
-                          .snapshots(),
-                      builder: (BuildContext context,
-                          AsyncSnapshot<QuerySnapshot> snapshot) {
-                        if (snapshot.hasError) {
-                          print(snapshot.error);
-                          return const Center(child: Text('Error'));
-                        }
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Padding(
-                            padding: EdgeInsets.only(top: 50),
-                            child: Center(
-                              child: CircularProgressIndicator(
-                                color: Colors.black,
-                              ),
-                            ),
-                          );
-                        }
-
-                        final data = snapshot.requireData;
-
-                        if (mytotal == 0) {
-                          DateTime currentDateTime = DateTime.now();
-
-                          Duration difference = currentDateTime.difference(
-                              data.docs.first['timestarted'].toDate());
-
-                          int hoursDifference = difference.inHours;
-                          mytotal = (220 * hoursDifference).toDouble() +
-                              newtotal.toDouble();
-                        }
-
-                        return data.docs.isNotEmpty
-                            ? SizedBox(
-                                width: 500,
-                                height: 150,
-                                child: ListView.builder(
-                                  itemCount: data.docs.length,
-                                  scrollDirection: Axis.horizontal,
-                                  itemBuilder: (context, index) {
-                                    return GestureDetector(
-                                      onTap: () {
-                                        DateTime currentDateTime =
-                                            DateTime.now();
-
-                                        Duration difference =
-                                            currentDateTime.difference(data
-                                                .docs[index]['timestarted']
-                                                .toDate());
-
-                                        int hoursDifference =
-                                            difference.inHours;
-                                        setState(() {
-                                          table = index;
-
-                                          mytotal = (220 * hoursDifference)
-                                                  .toDouble() +
-                                              newtotal.toDouble();
-                                        });
-                                      },
-                                      child: Card(
-                                        elevation: 3,
-                                        child: Container(
-                                          color: table == index
-                                              ? Colors.amber
-                                              : Colors.grey,
-                                          width: 150,
-                                          height: 150,
-                                          child: Center(
-                                            child: TextWidget(
-                                              text: 'Table ${index + 1}',
-                                              fontSize: 24,
-                                              color: Colors.white,
-                                              fontFamily: 'Bold',
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              )
-                            : Padding(
-                                padding: const EdgeInsets.only(top: 50),
-                                child: Center(
-                                  child: TextWidget(
-                                    text: 'No active table.',
-                                    fontSize: 18,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                              );
-                      }),
-                ],
-              ),
-              const SizedBox(
-                height: 10,
               ),
               const SizedBox(
                 height: 50,
@@ -321,16 +111,19 @@ class _SalesPageState extends State<SalesPage> {
                 color: Colors.green,
                 label: 'CASH',
                 onPressed: () {
-                  if (mytotal <= double.parse(cash.text)) {
+                  if (double.parse((widget.total + widget.time).toString()) <=
+                      double.parse(cash.text)) {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => PaymentPage(
-                              mode: 'Cash',
-                              time: (220 * hour).toDouble(),
-                              items: widget.items,
-                              user: _selectedOption1,
-                              payment: double.parse(cash.text),
-                              total: mytotal,
-                            )));
+                            customerId: widget.customerId,
+                            tableId: widget.tableId,
+                            mode: 'Cash',
+                            time: widget.time.toDouble(),
+                            items: widget.items,
+                            user: _selectedOption1,
+                            payment: double.parse(cash.text),
+                            total: double.parse(
+                                (widget.total + widget.time).toString()))));
                   } else {
                     showToast('Insufficient cash received!');
                   }
@@ -343,16 +136,19 @@ class _SalesPageState extends State<SalesPage> {
                 color: Colors.blue,
                 label: 'GCASH',
                 onPressed: () {
-                  if (mytotal < double.parse(cash.text)) {
+                  if (double.parse((widget.total + widget.time).toString()) <=
+                      double.parse(cash.text)) {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => PaymentPage(
-                              mode: 'GCash',
-                              time: (220 * hour).toDouble(),
-                              items: widget.items,
-                              user: _selectedOption1,
-                              payment: double.parse(cash.text),
-                              total: mytotal,
-                            )));
+                            customerId: widget.customerId,
+                            tableId: widget.tableId,
+                            mode: 'GCash',
+                            time: widget.time.toDouble(),
+                            items: widget.items,
+                            user: _selectedOption1,
+                            payment: double.parse(cash.text),
+                            total: double.parse(
+                                (widget.total + widget.time).toString()))));
                   } else {
                     showToast('Insufficient cash received!');
                   }
@@ -365,16 +161,19 @@ class _SalesPageState extends State<SalesPage> {
                 color: Colors.amber,
                 label: 'Debit/Credit',
                 onPressed: () {
-                  if (mytotal < double.parse(cash.text)) {
+                  if (double.parse((widget.total + widget.time).toString()) <=
+                      double.parse(cash.text)) {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => PaymentPage(
-                              mode: 'Card',
-                              time: (220 * hour).toDouble(),
-                              items: widget.items,
-                              user: _selectedOption1,
-                              payment: double.parse(cash.text),
-                              total: mytotal,
-                            )));
+                            customerId: widget.customerId,
+                            tableId: widget.tableId,
+                            mode: 'Card',
+                            time: widget.time.toDouble(),
+                            items: widget.items,
+                            user: _selectedOption1,
+                            payment: double.parse(cash.text),
+                            total: double.parse(
+                                (widget.total + widget.time).toString()))));
                   } else {
                     showToast('Insufficient cash received!');
                   }

@@ -29,6 +29,8 @@ class PaymentPage extends StatefulWidget {
   double payment;
   String user;
   String mode;
+  String tableId;
+  String customerId;
 
   double time;
 
@@ -37,6 +39,8 @@ class PaymentPage extends StatefulWidget {
   PaymentPage(
       {super.key,
       required this.mode,
+      required this.customerId,
+      required this.tableId,
       required this.time,
       required this.total,
       required this.payment,
@@ -168,7 +172,25 @@ class _PaymentPageState extends State<PaymentPage> {
               ButtonWidget(
                 color: Colors.green,
                 label: 'PAID',
-                onPressed: () {
+                onPressed: () async {
+                  if (widget.tableId != '') {
+                    await FirebaseFirestore.instance
+                        .collection('Tables')
+                        .doc(widget.tableId)
+                        .update({
+                      'started': false,
+                      'timestarted': '',
+                    });
+                  }
+
+                  await FirebaseFirestore.instance
+                      .collection('Customers')
+                      .doc(widget.customerId)
+                      .update({
+                    'table': '',
+                    'items': [],
+                  });
+
                   addReceipt(
                       widget.user,
                       widget.total,
@@ -180,6 +202,9 @@ class _PaymentPageState extends State<PaymentPage> {
                       builder: (context) => const HomeScreen()));
                   generateReceiptPdf(
                       widget.items, widget.time.toInt(), widget.total.toInt());
+
+                  // clear table
+                  // clear customer
                 },
               ),
               const SizedBox(
@@ -240,10 +265,10 @@ class _PaymentPageState extends State<PaymentPage> {
               mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
               children: [
                 pw.Text(
-                  '${dateFormat.format(subtractedDateTime)} - ${dateFormat.format(now)}',
+                  'Total Paid',
                 ),
                 pw.Text(
-                  'P$timerate.00',
+                  'P${widget.total}.00',
                 ),
               ],
             ),

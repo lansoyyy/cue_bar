@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cue_bar/screens/config_page.dart';
 import 'package:cue_bar/screens/products_screen.dart';
 import 'package:cue_bar/services/add_table.dart';
+import 'package:cue_bar/widgets/button_widget.dart';
 import 'package:cue_bar/widgets/text_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -174,13 +175,8 @@ class _TableScreenState extends State<TableScreen> {
                                         'timestarted': '',
                                       });
                                     } else {
-                                      await FirebaseFirestore.instance
-                                          .collection('Tables')
-                                          .doc(data.docs[index].id)
-                                          .update({
-                                        'started': true,
-                                        'timestarted': DateTime.now(),
-                                      });
+                                     showCustomers(data.docs[index].id);
+                                     
                                     }
                                   },
                                   child: Padding(
@@ -226,5 +222,79 @@ class _TableScreenState extends State<TableScreen> {
 
   String format(data) {
     return '${(data ~/ 3600).toString().padLeft(2, '0')}:${((data % 3600) ~/ 60).toString().padLeft(2, '0')}';
+  }
+
+  showCustomers(String id) {
+    return showDialog(context: context, builder: (context) {
+      return Dialog(
+        child: SizedBox(
+          height: 400,
+          width: 500,
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: StreamBuilder<QuerySnapshot>(
+              stream:
+                  FirebaseFirestore.instance.collection('Customers').snapshots(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.hasError) {
+                  print(snapshot.error);
+                  return const Center(child: Text('Error'));
+                }
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Padding(
+                    padding: EdgeInsets.only(top: 50),
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        color: Colors.black,
+                      ),
+                    ),
+                  );
+                }
+
+                final data = snapshot.requireData;
+                return ListView.builder(itemCount: data.docs.length,                  
+                  itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: GestureDetector(
+                          onTap: () async {
+
+                             await FirebaseFirestore.instance
+                                          .collection('Tables')
+                                          .doc(id)
+                                          .update({
+                                        'started': true,
+                                        'timestarted': DateTime.now(),
+                                      });
+
+                                       await FirebaseFirestore.instance
+                                          .collection('Customers')
+                                          .doc(data.docs[index].id)
+                                          .update({
+                                   
+    'table': id,
+                                      });
+                            
+                            Navigator.pop(context);
+                          },
+                          child: Row(
+                            children: [
+                              const Icon(Icons.account_circle_rounded,
+                              size: 50,),
+                              const SizedBox(width: 20,),
+                              TextWidget(text: data.docs[index]['name'], fontSize: 24,
+                              fontFamily: 'Bold',),
+                            ],
+                          ),
+                        ),
+                      );
+                    },);
+              }
+            ),
+          ),
+        ),
+      );
+    },);
   }
 }
