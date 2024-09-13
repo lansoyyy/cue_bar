@@ -175,8 +175,7 @@ class _TableScreenState extends State<TableScreen> {
                                         'timestarted': '',
                                       });
                                     } else {
-                                     showCustomers(data.docs[index].id);
-                                     
+                                      showCustomers(data.docs[index].id);
                                     }
                                   },
                                   child: Padding(
@@ -225,76 +224,88 @@ class _TableScreenState extends State<TableScreen> {
   }
 
   showCustomers(String id) {
-    return showDialog(context: context, builder: (context) {
-      return Dialog(
-        child: SizedBox(
-          height: 400,
-          width: 500,
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: StreamBuilder<QuerySnapshot>(
-              stream:
-                  FirebaseFirestore.instance.collection('Customers').snapshots(),
-              builder: (BuildContext context,
-                  AsyncSnapshot<QuerySnapshot> snapshot) {
-                if (snapshot.hasError) {
-                  print(snapshot.error);
-                  return const Center(child: Text('Error'));
-                }
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Padding(
-                    padding: EdgeInsets.only(top: 50),
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        color: Colors.black,
-                      ),
-                    ),
-                  );
-                }
-
-                final data = snapshot.requireData;
-                return ListView.builder(itemCount: data.docs.length,                  
-                  itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 10),
-                        child: GestureDetector(
-                          onTap: () async {
-
-                             await FirebaseFirestore.instance
-                                          .collection('Tables')
-                                          .doc(id)
-                                          .update({
-                                        'started': true,
-                                        'timestarted': DateTime.now(),
-                                      });
-
-                                       await FirebaseFirestore.instance
-                                          .collection('Customers')
-                                          .doc(data.docs[index].id)
-                                          .update({
-                                   
-    'table': id,
-                                      });
-                            
-                            Navigator.pop(context);
-                          },
-                          child: Row(
-                            children: [
-                              const Icon(Icons.account_circle_rounded,
-                              size: 50,),
-                              const SizedBox(width: 20,),
-                              TextWidget(text: data.docs[index]['name'], fontSize: 24,
-                              fontFamily: 'Bold',),
-                            ],
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          child: SizedBox(
+            height: 400,
+            width: 500,
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection('Customers')
+                      .snapshots(),
+                  builder: (BuildContext context,
+                      AsyncSnapshot<QuerySnapshot> snapshot) {
+                    if (snapshot.hasError) {
+                      print(snapshot.error);
+                      return const Center(child: Text('Error'));
+                    }
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Padding(
+                        padding: EdgeInsets.only(top: 50),
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            color: Colors.black,
                           ),
                         ),
                       );
-                    },);
-              }
+                    }
+
+                    final data = snapshot.requireData;
+                    return ListView.builder(
+                      itemCount: data.docs.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: GestureDetector(
+                            onTap: () async {
+                              await FirebaseFirestore.instance
+                                  .collection('Tables')
+                                  .doc(id)
+                                  .update({
+                                'started': true,
+                                'timestarted': DateTime.now(),
+                              });
+
+                              await FirebaseFirestore.instance
+                                  .collection('Customers')
+                                  .doc(data.docs[index].id)
+                                  .update({
+                                'table': id,
+                              });
+
+                              print(data.docs[index].id);
+
+                              Navigator.pop(context);
+                            },
+                            child: Row(
+                              children: [
+                                const Icon(
+                                  Icons.account_circle_rounded,
+                                  size: 50,
+                                ),
+                                const SizedBox(
+                                  width: 20,
+                                ),
+                                TextWidget(
+                                  text: data.docs[index]['name'],
+                                  fontSize: 24,
+                                  fontFamily: 'Bold',
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  }),
             ),
           ),
-        ),
-      );
-    },);
+        );
+      },
+    );
   }
 }

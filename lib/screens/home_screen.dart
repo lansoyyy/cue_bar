@@ -616,6 +616,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           items: data.docs[index]['items'],
                                         )));
                               } else {
+                                print('here');
                                 // Assume 'data.docs[index]['table']' contains the correct 'id' value to query Firestore.
                                 FirebaseFirestore.instance
                                     .collection('Tables')
