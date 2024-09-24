@@ -263,23 +263,22 @@ class _TableScreenState extends State<TableScreen> {
                           child: GestureDetector(
                             onTap: () async {
                               await FirebaseFirestore.instance
-                                  .collection('Tables')
-                                  .doc(id)
-                                  .update({
-                                'started': true,
-                                'timestarted': DateTime.now(),
-                              });
-
-                              await FirebaseFirestore.instance
                                   .collection('Customers')
                                   .doc(data.docs[index].id)
                                   .update({
                                 'table': id,
-                              });
-
-                              print(data.docs[index].id);
-
-                              Navigator.pop(context);
+                              }).whenComplete(
+                                () async {
+                                  await FirebaseFirestore.instance
+                                      .collection('Tables')
+                                      .doc(id)
+                                      .update({
+                                    'started': true,
+                                    'timestarted': DateTime.now(),
+                                  });
+                                  Navigator.pop(context);
+                                },
+                              );
                             },
                             child: Row(
                               children: [
